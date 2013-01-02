@@ -3,8 +3,9 @@
 
 A better markdown (for me at least)
 
-* there's a single way to do everything
-* link syntax that isn't confusing (perhaps `<link `<i>`link`</i>` `<i>`text`</i>`>`)
+* a single way to do everything
+* link syntax that isn't confusing (perhaps `<link http://google.com/ This is
+  google>` or something like that)
 * `/italics/` and `*bold*` instead of `*italics*` and `**bold**`
 * comes with a good plugin system 
 * and a reasonable set of plugins for typography etc.
