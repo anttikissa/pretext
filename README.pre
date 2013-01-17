@@ -192,10 +192,124 @@ quoted.  That means quoting special characters outside
 
 
 
+## Implementing plugins
 
+Pretext processing is split into phases.  Phases are functions that take some
+input and produce some output.
 
+TODO document phases
 
+TODO move this to later; this is just a shorthand for defining plugins on a fly.
+Possibly demonstrate it like this:
+	
+	pretext.before('all', function(input) { do something to input });
 
+and then congratulate the reader of having written his first Pretext plugin.
+
+If you need to do your processing before some other phase:
+
+	pretext.before(<phase>, function(input) { return output; });
+
+If you need to do your processing after some other phase:
+
+	pretext.after(<phase>, function(input) { return output; });
+
+To replace a phase:
+
+	pretext.replace(<phase>, function(input) { return output; });
+
+To remove a phase:
+
+	pretext.remove(<phase>);
+
+Inside phase functions, you can invoke other phases with:
+
+	output = this.<phase>(content)
+
+`this` is the `pretext` object.
+
+By default, Pretext attempts to inject your plugin immediately after or before a
+phase.  In the case of multiple plugins, the last to come will win.
+
+Plugins will themselves become phases once they are installed.
+
+(Eventually there may be multiple constraints between different plugins and some
+dependency analysis to determine a suitable order.)
+
+You can use pretext directly.  In that case, it comes with the default settings:
+
+	var pretext = require('pretext');
+	console.log(pretext('# Hello'));
+
+You can use `install` to install plugins.  Using a newly created instance is
+recommended (but not enforced):
+
+	var Pretext = require('pretext').Pretext;
+	var pretext = new Pretext();
+	pretext.install('uglify');
+	pretext.install('sanitize');
+	pretext.install(require('pretext-newlines'));
+
+Or, more succinctly:
+
+	var Pretext = require('pretext').Pretext;
+	var pretext = new Pretext('uglify', 'sanitize', require('pretext-newlines'));
+
+A plugin is either a string (in which case it's looked up in the internal
+plugins, of which there will be a few), or a function with an optional member
+(one of `after`, `before` or `replace`) that tells the phase where it should be
+plugged in.
+
+The `pretext-newlines` plugin, for example, is defined as:
+
+	function newlines(text) {
+		return text.replace('\n', '<br>');
+	}
+
+	// Or whatever 
+	newlines.after = 'filter';
+
+	module.exports = newlines;
+
+TODO some plugins may want to install multiple phases in different places.  What
+then?
+
+TODO some plugins may want to access a data object that collects data during the
+processing.  Or is that actually necessary?  We could also do things like a
+plugin that collects a list of figures from the text:
+
+	var figures = [];
+	pretext.after('filter', function collect(text) { // collect figures in `figures` });
+	pretext.after('all', function summarize(text) { // append list of figures at the end }); 
+
+Ideally, the data would live as a variable inside the second phase, but it needs
+to be readable by the first phase.  Perhaps allow this:
+
+	pretext.replace('all', function summarize(text) {
+		var figures = [];
+		function collect(text) {
+			... access `figures` ...
+		}
+		pretext.after('filter', collect);
+		var result = inner.all()
+		// append stuff to `result` and return
+	});
+
+Where `pretext.after('filter', collect)` will replace the current `collect` if
+one was previously installed.  Another question arises: should
+`pretext.replace('all')` save the name of the old phase as an alias for the new
+phase?  Obviously others might refer to `all` and expect it to work.
+
+Example: github markdown style fenced code blocks
+
+Example: roman literals
+
+Example: typography with options
+
+Example: custom HTML elements (`<sc>` to generate better fake small caps;
+<sample> to show a code block followed by its output)
+
+Example: beautify / uglify HTML
 
 ## To study
 
@@ -207,5 +321,6 @@ quoted.  That means quoting special characters outside
 * MultiMarkdown http://fletcherpenney.net/multimarkdown/
 * PHP Markdown Extra http://michelf.ca/projects/php-markdown/extra/ 
 * reStructuredText (though it's quite 90's) http://en.wikipedia.org/wiki/ReStructuredText
+
 
 
