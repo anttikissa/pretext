@@ -1,0 +1,164 @@
+#!/usr/bin/env node
+
+var assert = require('basic-assert');
+var pretext = require('./');
+
+assert.is(pretext.trim('a\n  \nb'), 'a\n\nb');
+assert.is(pretext.trim('foo\n  \n  bar  \n\t\nzot'), 'foo\n\n  bar  \n\nzot');
+assert.is(pretext.trim('\n\nfoo\n\n  \n'), 'foo');
+assert.is(pretext.trim('one\n   \ntwo\t  \n \t\f\r\nthree \n\n '), 'one\n\ntwo\t  \n\nthree ');
+
+assert.is(pretext.untabify('\t'), '    ');
+assert.is(pretext.untabify(' \t'), '    ');
+assert.is(pretext.untabify('  \t'), '    ');
+assert.is(pretext.untabify('   \t'), '    ');
+assert.is(pretext.untabify('    \t'), '        ');
+assert.is(pretext.untabify('\tbar'), '    bar');
+assert.is(pretext.untabify('*\tbar'), '*   bar');
+assert.is(pretext.untabify(' *\t two'), ' *   two');
+assert.is(pretext.untabify(' *\t\t three'), ' *       three');
+assert.is(pretext.untabify('\t1\t2\n  \t\t zot\t'), '    1   2\n         zot    ');
+
+assert.eq(pretext.split('one\ntwo\n\nthree\n\n\nfour'), ['one\ntwo', 'three', 'four']);
+
+assert.is(pretext.type('Hello world!'), 'paragraph');
+assert.is(pretext.type('# foo'), 'heading');
+assert.is(pretext.type(' # foo'), 'paragraph');
+assert.is(pretext.type('###### foo'), 'heading');
+assert.is(pretext.type('####### foo'), 'paragraph');
+assert.is(pretext.type('    foo'), 'codeBlock');
+assert.is(pretext.type('   foo'), 'paragraph');
+assert.is(pretext.type('*   foo'), 'codeBlock');
+assert.is(pretext.type('*  foo'), 'ul');
+assert.is(pretext.type('* list'), 'ul');
+assert.is(pretext.type('*list'), 'paragraph');
+assert.is(pretext.type('#. list'), 'ol');
+assert.is(pretext.type('#.list'), 'paragraph');
+assert.is(pretext.type('> text'), 'blockquote');
+assert.is(pretext.type('>text'), 'paragraph');
+assert.is(pretext.type('<ins>text</ins>'), 'html');
+assert.is(pretext.type(' <ins>text</ins>'), 'html');
+assert.is(pretext.type('A <ins>text</ins>'), 'paragraph');
+assert.is(pretext.type('* <ins>text</ins>'), 'ul');
+
+assert.is(pretext.handle('This is a paragraph.'), '<p>This is a paragraph.');
+assert.is(pretext.handle('A two-line\nparagraph.'), '<p>A two-line\nparagraph.');
+
+assert.is(pretext.handle('# Title'), '<h1>Title</h1>');
+assert.is(pretext.handle('###### Subsubsubsubsubtitle'), '<h6>Subsubsubsubsubtitle</h6>');
+assert.is(pretext.handle('####### Subsubsubsubsubtitle'), '<p>####### Subsubsubsubsubtitle');
+assert.is(pretext.handle('    while (true)\n        repeat();'), '<pre><code>while (true)\n    repeat();</code></pre>');
+assert.is(pretext.handle('    while (true)\n*       repeat();'), '<pre><code>while (true)\n<b>    repeat();</b></code></pre>');
+//assert.is(pretext.handle('    <!doctype html>\n    <html>&c.</html>'), '<pre><code>&lt;!doctype html&gt;\n&lt;html&gt;&amp;c.&lt;&sol;html&gt;</code></pre>');
+
+assert.is(pretext.handle('* foo\n* bar'), '<ul>\n<li>foo\n<li>bar\n</ul>');
+assert.is(pretext.handle('* foo\n* bar\n  zot'), '<ul>\n<li>foo\n<li>bar\n  zot\n</ul>');
+assert.is(pretext.handle('#. foo\n#. bar'), '<ol>\n<li>foo\n<li>bar\n</ol>');
+
+assert.is(pretext.handle('<hr>'), '<hr>');
+
+assert.is(pretext.handle('> First line\n> another one.'), '<blockquote><p>First line\nanother one.\n</blockquote>');
+assert.is(pretext.handle('> First paragraph\n> inside a blockquote.\n> \n> Second.'), '<blockquote><p>First paragraph\ninside a blockquote.\n<p>Second.\n</blockquote>');
+
+assert.is(pretext.escape("<h1 class='foo'>One & two</h1>"), "&lt;h1 class=&#39;foo&#39;&gt;One &amp; two&lt;/h1&gt;");
+
+assert.is(pretext.filter('X & Y'), 'X &amp; Y');
+assert.is(pretext.filter('0 < a href > d < /a >'), '0 &lt; a href &gt; d &lt; /a &gt;');
+
+assert.is(pretext.codify('a `span` of `<code>`'), 'a <code>span</code> of <code>&lt;code&gt;</code>');
+assert.is(pretext.codify('`a && b << 2 + ""`'), '<code>a &amp;&amp; b &lt;&lt; 2 + &quot;&quot;</code>');
+//assert.is(pretext.codify('`/italic/ and *bold* and _link to_ (foo.html)`'), '<code>&sol;italic&sol; and &ast;bold&ast; and &lowbar;link to&lowbar; (foo.html)</code>');
+assert.is(pretext.filter('`/foo_bar/ & 1` looks like /foo_bar/ & 1'), '<code>/foo_bar/ &amp; 1</code> looks like <i>foo_bar</i> &amp; 1');
+
+//assert.is(pretext.codify('`\\``'), '<code>`</code>');
+//assert.is(pretext.codify('`\\`` `\\\\` `\\\\\\``'), '<code>`</code> <code>\\</code> <code>\\`</code>');
+//assert.is(pretext.codify('A \\` outside a `<code>` block'), "A ` outside a <code>&lt;code&gt;</code> block");
+//assert.is(pretext.codify('&`code`'), '&amp;<code>code</code>');
+
+assert.is(pretext.italicize('Its /italic/, /and this/.'), 'Its <i>italic</i>, <i>and this</i>.');
+assert.is(pretext.italicize('And // this?'), 'And // this?');
+assert.is(pretext.italicize('(/This, too/.)'), '(<i>This, too</i>.)');
+assert.is(pretext.italicize('/(This, too.)/'), '<i>(This, too.)</i>');
+assert.is(pretext.italicize('/Really/?'), '<i>Really</i>?');
+assert.is(pretext.italicize('/Really!/'), '<i>Really!</i>');
+assert.is(pretext.italicize('/a/ /b/ /c/ /d/'), '<i>a</i> <i>b</i> <i>c</i> <i>d</i>');
+
+assert.is(pretext.italicize('This is /A/B testing/!'), 'This is <i>A/B testing</i>!');
+assert.is(pretext.italicize('This is not: and/or/something'), 'This is not: and/or/something');
+assert.is(pretext.italicize('1 / 2 * 3 / 4 + /a / b / c/.'), '1 / 2 * 3 / 4 + <i>a / b / c</i>.');
+assert.is(pretext.italicize('/Italic/ starts, /in middle/, /ends/'), '<i>Italic</i> starts, <i>in middle</i>, <i>ends</i>');
+assert.is(pretext.italicize('A // comment?'), 'A // comment?');
+assert.is(pretext.italicize("across /the\nnewline/, too"), "across <i>the\nnewline</i>, too");
+assert.is(pretext.italicize('<code>printf()</code> w/ extra sauce'), '<code>printf()</code> w/ extra sauce');
+assert.is(pretext.italicize('https://this.is.url.com/'), 'https://this.is.url.com/');
+assert.is(pretext.italicize('file:///path.to/some/file/'), 'file:///path.to/some/file/');
+
+assert.is(pretext.boldify('*this is bold*'), '<b>this is bold</b>');
+assert.is(pretext.boldify('*this* *too* *is*'), '<b>this</b> <b>too</b> <b>is</b>');
+assert.is(pretext.boldify('*multiple words*'), '<b>multiple words</b>');
+assert.is(pretext.boldify('inside *a sentence* works'), 'inside <b>a sentence</b> works');
+
+assert.is(pretext.boldify('but 2 * 3 * 4 is not *bold*'), 'but 2 * 3 * 4 is not <b>bold</b>');
+assert.is(pretext.boldify('nor is a*b*c nor a*b* nor *a*b'), 'nor is a*b*c nor a*b* nor *a*b');
+
+assert.is(pretext.boldify(pretext.italicize('*this /sentence is* invalid/')), '<b>this <i>sentence is</b> invalid</i>');
+
+assert.is(pretext.italicize(pretext.boldify('*this /sentence is* invalid/')), '<b>this <i>sentence is</b> invalid</i>');
+
+var bracketMatcher = function(string) {
+	var pattern = /<((?:[^<>]*<(?:[^<>]*<[^<>]*>)*[^<>]*>)*[^<>]*)>/;
+	var match = string.match(pattern);
+	return match ? match[1] : null;
+}
+
+assert.is(bracketMatcher('<hello>'), 'hello');
+assert.is(bracketMatcher('a <b> c'), 'b');
+assert.is(bracketMatcher('a <first> <second> c'), 'first');
+assert.is(bracketMatcher('<less <than>'), 'than');
+assert.is(bracketMatcher('<a <b> c>'), 'a <b> c');
+assert.is(bracketMatcher('<a <b> and <c> d>'), 'a <b> and <c> d');
+assert.is(bracketMatcher('<a <b <c> <d> e> and <f <g> h> i>'), 'a <b <c> <d> e> and <f <g> h> i');
+
+assert.is(bracketMatcher('<<<>>>'), '<<>>');
+assert.is(bracketMatcher('<<<<>>>>'), '<<>>');
+assert.is(bracketMatcher('<<<<><><>>>>'), '<<><><>>');
+assert.is(bracketMatcher('<foo<bar>>>>'), 'foo<bar>');
+assert.is(bracketMatcher('<<<<foo<bar>>'), 'foo<bar>');
+
+assert.is(bracketMatcher('<4<3<2<1'), null);
+assert.is(bracketMatcher('<4<3<2<1>'), '1');
+assert.is(bracketMatcher('<4<3<2<1>>'), '2<1>');
+assert.is(bracketMatcher('<4<3<2<1>>>'), '3<2<1>>');
+assert.is(bracketMatcher('<4<3<2<1>>>>'), '3<2<1>>');
+
+assert.is(pretext.linkify('_previous_ and _next_'), '<a>previous</a> and <a>next</a>');
+assert.is(pretext.linkify('_Google_ (http://google.com/)'), "<a href='http://google.com/'>Google</a>");
+assert.is(pretext.linkify("_Google_ (http://google.com/?q=foo&x='abc')"), "<a href='http://google.com/?q=foo&amp;x=&#39;abc&#39;'>Google</a>");
+assert.is(pretext.linkify("_A (band)_ (http://en.wikipedia.org/wiki/A_(band))"), "<a href='http://en.wikipedia.org/wiki/A_(band)'>A (band)</a>");
+assert.is(pretext.linkify("_Law (band)_ (http://en.wikipedia.org/wiki/Law_(band)_(disambiguation))"), "<a href='http://en.wikipedia.org/wiki/Law_(band)_(disambiguation)'>Law (band)</a>");
+assert.is(pretext.linkify("_Hypothetical URL_ (http://eval.com/(+ 1 (+ 2 3)))"), "<a href='http://eval.com/(+ 1 (+ 2 3))'>Hypothetical URL</a>");
+assert.is(pretext.linkify("_Hypothetical URL_ (http://eval.com/(+ 1 (+ 2 3) (- 2 3) ()()()))"), "<a href='http://eval.com/(+ 1 (+ 2 3) (- 2 3) ()()())'>Hypothetical URL</a>");
+assert.is(pretext.linkify("_This fails_ (http://eval.com/(+ 1 (+ 2 (+ 3 4))))"), "<a>This fails</a> (http://eval.com/(+ 1 (+ 2 (+ 3 4))))");
+
+assert.is(pretext.linkify("V8's _structured\nstack trace_ (http://code.google.com/p/v8/wiki/JavaScriptStackTraceApi)"), "V8's <a href='http://code.google.com/p/v8/wiki/JavaScriptStackTraceApi'>structured\nstack trace</a>");
+
+assert.is(pretext("    int x;\n    \n    x = 1;"), "<pre><code>int x;\n\nx = 1;</code></pre>\n");
+
+assert.is(pretext('    \\`'), '<pre><code>\\`</code></pre>\n');
+
+assert.is(pretext.dashify('-- stuff---more --'), '&ndash; stuff&mdash;more &ndash;');
+assert.is(pretext.dashify('<!-- comment --> -- not touched'), '<!-- comment --> &ndash; not touched');
+assert.is(pretext.dashify('a longdash-----is not touched'), 'a longdash-----is not touched');
+
+assert.is(pretext.filter('yes &ndash; no &amp; &'), 'yes &ndash; no &amp; &amp;');
+assert.is(pretext.filter('&#123;, &RightUpVector;, &#x2020;, but &auml'), '&#123;, &RightUpVector;, &#x2020;, but &amp;auml');
+assert.is(pretext.filter("0 <a href='/get?x=1&y=2'>link</a>"), "0 <a href='/get?x=1&y=2'>link</a>");
+assert.is(pretext.filter("<i data-etc='&c.' data-name='*this*'>*that* &c.</i>"), "<i data-etc='&c.' data-name='*this*'><b>that</b> &amp;c.</i>");
+assert.is(pretext.filter('<span>&<span>&<span>'), '<span>&amp;<span>&amp;<span>');
+assert.is(pretext.filter("if 0<x, I'm *so* going to make this face >_< - I /am/"), "if 0<x, I'm *so* going to make this face >_&lt; - I <i>am</i>");
+
+assert.is(pretext.filter('/Url is http://foo.com'), '/Url is http://foo.com');
+assert.is(pretext.filter('This /might not get italicized:/'), 'This /might not get italicized:/');
+assert.is(pretext.normalText('<br & />&/'), '<br & />&amp;/');
+
+

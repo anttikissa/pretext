@@ -1,0 +1,25 @@
+{
+  "name": "pretext",
+  "version": "0.0.1",
+  "description": "Pretext, a simple Markdown-inspired markup language",
+  "main": "index.js",
+  "scripts": {
+    "test": "./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anttisykari/pretext"
+  },
+  "keywords": [
+    "pretext",
+    "markup",
+    "preprocessor",
+    "html",
+    "text"
+  ],
+  "author": "Antti Sykäri",
+  "license": "BSD",
+  "devDependencies": {
+    "basic-assert": "0.0.2"
+  }
+}

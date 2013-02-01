@@ -1,5 +1,10 @@
 # Pretext
 
+## Work in progress
+
+The current implementation works, roughly, but doesn't quite follow all of the
+design guidelines.  Expect the language to change.
+
 ## Better than Markdown
 
 Pretext is a replacement for Markdown (the language).  It doesn't try to offer
