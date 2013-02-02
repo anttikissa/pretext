@@ -1,6 +1,6 @@
 {
   "name": "pretext",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Pretext, a simple Markdown-inspired markup language",
   "main": "index.js",
   "scripts": {
