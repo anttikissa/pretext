@@ -115,7 +115,7 @@ function type(element) {
 		return 'codeBlock';
 	} else if (/^\* /.test(element)) {
 		return 'ul';
-	} else if (/^\#\. /.test(element)) {
+	} else if (/^[0-9]+\. /.test(element)) {
 		return 'ol';
 	} else if (/^> /.test(element)) {
 		return 'blockquote';
@@ -131,18 +131,34 @@ function handle(element) {
 }
 
 function li(item) {
-	var content = item.replace(/^(\* |#. )/, '');
+	var content = item.replace(/^(\* |[0-9]+. )/, '');
 	return "<li>" + filter(content);
 }
 
 // Allowed prefixes: `/^\* /` and `/^#. /`. Those are hardcoded in `separator`.
-function list(type, element) {
-	var separator = /\n(?=\* |#. )/;
-	var result = "<" + type + ">\n";
+function ul(element) {
+	var separator = /\n\* /;
+	var result = "<ul>\n";
 	element.split(separator).forEach(function(item) {
 		result += li(item) + '\n';
 	});
-	result += "</" + type + ">";
+	result += "</ul>";
+	return result;
+}
+
+function ol(element) {
+	var separator = /\n(?:[0-9]+)\. /;
+	var first = element.match(/^([0-9]+)\. /)[1];
+	if (first == 1) {
+		var result = "<ol>\n";
+	} else {
+		var result = "<ol start=" + first + ">\n";
+	}
+
+	element.split(separator).forEach(function(item) {
+		result += li(item) + '\n';
+	});
+	result += "</ol>";
 	return result;
 }
 
@@ -176,10 +192,10 @@ var handlers = {
 		return "<pre><code>" + content + "</code></pre>";
 	},
 	ul: function(element) {
-		return list("ul", element);
+		return ul(element);
 	},
 	ol: function(element) {
-		return list("ol", element);
+		return ol(element);
 	},
 	html: function(element) {
 		return element;

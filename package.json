@@ -23,6 +23,6 @@
   "author": "Antti Sykäri",
   "license": "BSD",
   "devDependencies": {
-    "basic-assert": "0.0.2"
+    "basic-assert": "0.1.0"
   }
 }

@@ -5,6 +5,8 @@ var pretext = require('./');
 
 // Whitespace manipulation
 
+assert.fatal = false;
+
 assert.is(pretext.trim('a\n  \nb'), 'a\n\nb');
 assert.is(pretext.trim('foo\n  \n  bar  \n\t\nzot'), 'foo\n\n  bar  \n\nzot');
 assert.is(pretext.trim('\n\nfoo\n\n  \n'), 'foo');
@@ -36,8 +38,8 @@ assert.is(pretext.type('*   foo'), 'codeBlock');
 assert.is(pretext.type('*  foo'), 'ul');
 assert.is(pretext.type('* list'), 'ul');
 assert.is(pretext.type('*list'), 'paragraph');
-assert.is(pretext.type('#. list'), 'ol');
-assert.is(pretext.type('#.list'), 'paragraph');
+assert.is(pretext.type('1. list'), 'ol');
+assert.is(pretext.type('1.list'), 'paragraph');
 assert.is(pretext.type('> text'), 'blockquote');
 assert.is(pretext.type('>text'), 'paragraph');
 assert.is(pretext.type('<ins>text</ins>'), 'html');
@@ -59,7 +61,7 @@ assert.is(pretext.handle('    while (true)\n*       repeat();'), '<pre><code>whi
 
 assert.is(pretext.handle('* foo\n* bar'), '<ul>\n<li>foo\n<li>bar\n</ul>');
 assert.is(pretext.handle('* foo\n* bar\n  zot'), '<ul>\n<li>foo\n<li>bar\n  zot\n</ul>');
-assert.is(pretext.handle('#. foo\n#. bar'), '<ol>\n<li>foo\n<li>bar\n</ol>');
+assert.is(pretext.handle('1. foo\n1. bar'), '<ol>\n<li>foo\n<li>bar\n</ol>');
 
 assert.is(pretext.handle('<hr>'), '<hr>');
 
