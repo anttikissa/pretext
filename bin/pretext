@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var pretext = require('../');
+
+var stdin = process.stdin;
+
+var args = process.argv.splice(2);
+if (args.length != 1) {
+	console.log("Usage: pretext <filename>\n");
+	console.log("If <filename> is '-', read from standard input.");
+	return;
+} 
+
+var filename = args[0];
+if (filename === '-') {
+	var chunks = [];  
+	stdin.resume();
+	stdin.on('data', function(chunk) {
+		chunks.push(chunk);
+	});
+	stdin.on('end', function() {
+		var contents = Buffer.concat(chunks).toString('utf8');
+		process.stdout.write(pretext(contents));
+	});
+} else {
+	var contents = fs.readFileSync(args[0], 'utf8');
+	process.stdout.write(pretext(contents));
+}
+
+
