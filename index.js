@@ -223,26 +223,29 @@ function joinCodeBlocks(parts) {
 }
 
 function mk(text) {
-	var preprocessed = untabify(trim(text));
-	var parts = joinCodeBlocks(split(preprocessed));
-	var converted = parts.map(handle);
-	return converted.join('\n') + '\n';
+	text = trim(text);
+	text = untabify(text);
+	parts = split(text);
+	parts = joinCodeBlocks(parts);
+	parts = parts.map(handle);
+	text = parts.join('\n') + '\n';
+	return text;
 }
 
-module.exports = mk;
+mk.trim = trim;
+mk.untabify = untabify;
+mk.split = split;
+mk.type = type;
+mk.handle = handle;
+mk.escape = escape;
+mk.escapeCode = escapeCode;
+mk.normalText = normalText;
+mk.filter = filter;
+mk.codify = codify;
+mk.italicize = italicize;
+mk.boldify = boldify;
+mk.linkify = linkify;
+mk.dashify = dashify;
 
-module.exports.trim = trim;
-module.exports.untabify = untabify;
-module.exports.split = split;
-module.exports.type = type;
-module.exports.handle = handle;
-module.exports.escape = escape;
-module.exports.escapeCode = escapeCode;
-module.exports.normalText = normalText;
-module.exports.filter = filter;
-module.exports.codify = codify;
-module.exports.italicize = italicize;
-module.exports.boldify = boldify;
-module.exports.linkify = linkify;
-module.exports.dashify = dashify;
+module.exports = mk;
 
