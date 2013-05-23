@@ -72,18 +72,18 @@ assert.is(pretext.handle('> First paragraph\n> inside a blockquote.\n> \n> Secon
 
 assert.is(pretext.escape("<h1 class='foo'>One & two</h1>"), "&lt;h1 class=&#39;foo&#39;&gt;One &amp; two&lt;/h1&gt;");
 
-assert.is(pretext.filter('X & Y'), 'X &amp; Y');
-assert.is(pretext.filter('0 < a href > d < /a >'), '0 &lt; a href &gt; d &lt; /a &gt;');
+assert.is(pretext.text('X & Y'), 'X &amp; Y');
+assert.is(pretext.text('0 < a href > d < /a >'), '0 &lt; a href &gt; d &lt; /a &gt;');
 
 assert.is(pretext.codify('a `span` of `<code>`'), 'a <code>span</code> of <code>&lt;code&gt;</code>');
 assert.is(pretext.codify('`a && b << 2 + ""`'), '<code>a &amp;&amp; b &lt;&lt; 2 + &quot;&quot;</code>');
 //assert.is(pretext.codify('`/italic/ and *bold* and _link to_ (foo.html)`'), '<code>&sol;italic&sol; and &ast;bold&ast; and &lowbar;link to&lowbar; (foo.html)</code>');
-assert.is(pretext.filter('`/foo_bar/ & 1` looks like /foo_bar/ & 1'), '<code>/foo_bar/ &amp; 1</code> looks like <i>foo_bar</i> &amp; 1');
+assert.is(pretext.text('`/foo_bar/ & 1` looks like /foo_bar/ & 1'), '<code>/foo_bar/ &amp; 1</code> looks like <i>foo_bar</i> &amp; 1');
 
 assert.is(pretext.codify('`\\``'), '<code>`</code>');
 assert.is(pretext.codify('`\\`` `\\\\` `\\\\\\``'), '<code>`</code> <code>\\</code> <code>\\`</code>');
 //assert.is(pretext.codify('A \\` outside a `<code>` block'), "A ` outside a <code>&lt;code&gt;</code> block");
-assert.is(pretext.filter('&`code`'), '&amp;<code>code</code>');
+assert.is(pretext.text('&`code`'), '&amp;<code>code</code>');
 
 // Rest of the inline filters
 
@@ -170,16 +170,18 @@ assert.is(pretext.dashify('a longdash-----is not touched'), 'a longdash-----is n
 
 // Check that character references, inline html, etc. are handled correctly
 
-assert.is(pretext.filter('yes &ndash; no &amp; &'), 'yes &ndash; no &amp; &amp;');
-assert.is(pretext.filter('&#123;, &RightUpVector;, &#x2020;, but &auml'), '&#123;, &RightUpVector;, &#x2020;, but &amp;auml');
-assert.is(pretext.filter("0 <a href='/get?x=1&y=2'>link</a>"), "0 <a href='/get?x=1&y=2'>link</a>");
-assert.is(pretext.filter("<i data-etc='&c.' data-name='*this*'>*that* &c.</i>"), "<i data-etc='&c.' data-name='*this*'><b>that</b> &amp;c.</i>");
-assert.is(pretext.filter('<span>&<span>&<span>'), '<span>&amp;<span>&amp;<span>');
-assert.is(pretext.filter("if 0<x, I'm *so* going to make this face >_< - I /am/"), "if 0<x, I'm *so* going to make this face >_&lt; - I <i>am</i>");
+assert.is(pretext.text('yes &ndash; no &amp; &'), 'yes &ndash; no &amp; &amp;');
+assert.is(pretext.text('&#123;, &RightUpVector;, &#x2020;, but &auml'), '&#123;, &RightUpVector;, &#x2020;, but &amp;auml');
+assert.is(pretext.text("0 <a href='/get?x=1&y=2'>link</a>"), "0 <a href='/get?x=1&y=2'>link</a>");
+assert.is(pretext.text("<i data-etc='&c.' data-name='*this*'>*that* &c.</i>"), "<i data-etc='&c.' data-name='*this*'><b>that</b> &amp;c.</i>");
+assert.is(pretext.text('<span>&<span>&<span>'), '<span>&amp;<span>&amp;<span>');
+assert.is(pretext.text("if 0<x, I'm *so* going to make this face >_< - I /am/"), "if 0<x, I'm *so* going to make this face >_&lt; - I <i>am</i>");
 
-assert.is(pretext.filter('/Url is http://foo.com'), '/Url is http://foo.com');
-assert.is(pretext.filter('This /might not get italicized:/'), 'This /might not get italicized:/');
-assert.is(pretext.normalText('<br & />&/'), '<br & />&amp;/');
+assert.is(pretext.text('/Url is http://foo.com'), '/Url is http://foo.com');
+assert.is(pretext.text('This /might not get italicized:/'), 'This /might not get italicized:/');
+assert.is(pretext.textWithHtml('<br & />&/'), '<br & />&amp;/');
+
+assert.is(pretext.codify('`_foo_ *bar*`'), '<code>_foo_ *bar*</code>');
 
 // Test the examples
 
