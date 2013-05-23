@@ -58,7 +58,7 @@ write your own.
 
 #### Examples of things that might surprise you
 
-If `_foo_ (?bar=1&zot=2)` is escaped, why isn't `<a
+If `\_foo\_ (?bar=1&zot=2)` is escaped, why isn't `<a
 href='?bar=1&zot=2'>foo</a>`?
 
 Consider the difference between these Markdown excerpts:
@@ -80,17 +80,17 @@ It should be obvious that the latter one is what the user wanted.  We arrive at
 a maxim: inconspicuous changes in the source shouldn't cause conspicuous changes
 in the output.
 
-- If the user starts a paragraph with an HTML element that looks like it starts
+* If the user starts a paragraph with an HTML element that looks like it starts
   a paragraph, then it should start a paragraph, otherwise it should be a
   standalone HTML element.  (See the list of elements that allow you to skip a
   `</p>`:
   http://developers.whatwg.org/syntax.html#optional-tags)
 
-- If `\\` is used to quote things, it is to be used consistently.
-  - The general meaning: if a character has a special meaning in Pretext, and you
+* If `\\` is used to quote things, it is to be used consistently.
+  * The general meaning: if a character has a special meaning in Pretext, and you
     want to use that character literally, put a `\\` in front of it
-  - Inside `, should it prevent things from being quoted?  To highlight parts of
-	the code, for example?
+  * Inside `, should it prevent things from being quoted?  To highlight parts of
+    the code, for example?
 
 ### Trust the user.
 
@@ -158,16 +158,16 @@ different solution.  There should be only one obvious solution to a problem.
 
 Examples of problems:
 
-- add a `class` attribute to a link 
-- use a different kind of link
+* add a `class` attribute to a link 
+* use a different kind of link
 
 Whenever there's a recurring problem, there should be a plugin to do it; if
 there isn't, it should be relatively straightforward to write one.
 
 There are roughly two kinds of problems:
 
-- the user wants to do something Pretext supports, but Pretext fails to deliver.
-- the user wants to do something Pretext doesn't support, 
+* the user wants to do something Pretext supports, but Pretext fails to deliver.
+* the user wants to do something Pretext doesn't support, 
 
 
 ### Order of priorities

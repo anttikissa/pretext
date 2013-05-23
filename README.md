@@ -55,16 +55,20 @@ href=&#39;?bar=1&amp;zot=2&#39;&gt;foo&lt;/a&gt;</code>?
 <p>It should be obvious that the latter one is what the user wanted.  We arrive at
 a maxim: inconspicuous changes in the source shouldn&#39;t cause conspicuous changes
 in the output.
-<p>- If the user starts a paragraph with an HTML element that looks like it starts
+<ul>
+<li>If the user starts a paragraph with an HTML element that looks like it starts
   a paragraph, then it should start a paragraph, otherwise it should be a
   standalone HTML element.  (See the list of elements that allow you to skip a
   <code>&lt;/p&gt;</code>:
   http://developers.whatwg.org/syntax.html#optional-tags)
-<p>- If <code>\</code> is used to quote things, it is to be used consistently.
-  - The general meaning: if a character has a special meaning in Pretext, and you
+</ul>
+<ul>
+<li>If <code>\</code> is used to quote things, it is to be used consistently.
+  * The general meaning: if a character has a special meaning in Pretext, and you
     want to use that character literally, put a <code>\</code> in front of it
-  - Inside `, should it prevent things from being quoted?  To highlight parts of
+  * Inside `, should it prevent things from being quoted?  To highlight parts of
     the code, for example?
+</ul>
 <h3>Trust the user.</h3>
 <p>If you write invalid Pretext, you&#39;ll get invalid markup. <code>*one _two three*
 four_</code>._  But Pretext tries to make it obvious if you do.
@@ -109,13 +113,17 @@ poem inside <code>&lt;code&gt;</code>, would it?
 Problems should be solvably first intuitive, googleable, or trying a couple of
 different solution.  There should be only one obvious solution to a problem.
 <p>Examples of problems:
-<p>- add a <code>class</code> attribute to a link 
-- use a different kind of link
+<ul>
+<li>add a <code>class</code> attribute to a link 
+<li>use a different kind of link
+</ul>
 <p>Whenever there&#39;s a recurring problem, there should be a plugin to do it; if
 there isn&#39;t, it should be relatively straightforward to write one.
 <p>There are roughly two kinds of problems:
-<p>- the user wants to do something Pretext supports, but Pretext fails to deliver.
-- the user wants to do something Pretext doesn&#39;t support, 
+<ul>
+<li>the user wants to do something Pretext supports, but Pretext fails to deliver.
+<li>the user wants to do something Pretext doesn&#39;t support, 
+</ul>
 <h3>Order of priorities</h3>
 <ol>
 <li>Extensible
