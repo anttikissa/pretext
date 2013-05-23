@@ -154,7 +154,7 @@ function linkify(text) {
 	var pattern = /\b_(?!\s)([^]*?[^\s])_(?:\s*\(((?:[^\(\)]*\((?:[^\(\)]*\([^\(\)]*\))*[^\(\)]*\))*[^\(\)]*)\)|\b)/g;
 
 	return text.replace(pattern, function(match, p1, p2, p3) {
-		var href = p2 ? " href='" + escape(p2)+ "'" : "";
+		var href = p2 ? " href='" + escapeSome(p2)+ "'" : "";
 		return '<a' + href + '>' + p1 + '</a>';
 	});
 }
