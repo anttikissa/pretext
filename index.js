@@ -149,16 +149,20 @@ function boldify(text) {
 
 // Replace _link text_ (url) with <a href='url'>link text</a>.
 //
-// URLs 
+// Nested parentheses inside the URLs are supported to two levels of nesting:
+//
+// _link_ (http://domain.com/this(is(url))) ->
+// <a href='http://domain.com/this(is(url))'>link</a>
 function linkify(text) {
 	var pattern = /\b_(?!\s)([^]*?[^\s])_(?:\s*\(((?:[^\(\)]*\((?:[^\(\)]*\([^\(\)]*\))*[^\(\)]*\))*[^\(\)]*)\)|\b)/g;
 
 	return text.replace(pattern, function(match, p1, p2, p3) {
-		var href = p2 ? " href='" + escapeSome(p2)+ "'" : "";
+		var href = p2 ? " href='" + escapeSome(p2) + "'" : "";
 		return '<a' + href + '>' + p1 + '</a>';
 	});
 }
 
+// Replace -- with &ndash; and --- with &mdash;.
 function dashify(text) {
 	var pattern = /(^|[^!-])(---?)([^->]|$)/g;
 	return text.replace(pattern, function(match, p1, p2, p3) {
