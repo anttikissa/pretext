@@ -252,7 +252,7 @@ var handlers = {
 		}
 		var content = lines.map(deindent).join('\n');
 
-		return "<pre><code>" + content + "</code></pre>";
+		return "<pre class=code>" + content + "</pre>";
 	},
 	ul: function(element) {
 		return ul(element);

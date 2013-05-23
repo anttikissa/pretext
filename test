@@ -5,7 +5,7 @@ var pretext = require('./');
 
 // Whitespace manipulation
 
-assert.fatal = false;
+//assert.fatal = false;
 
 assert.is(pretext.trim('a\n  \nb'), 'a\n\nb');
 assert.is(pretext.trim('foo\n  \n  bar  \n\t\nzot'), 'foo\n\n  bar  \n\nzot');
@@ -55,9 +55,8 @@ assert.is(pretext.handle('A two-line\nparagraph.'), '<p>A two-line\nparagraph.')
 assert.is(pretext.handle('# Title'), '<h1>Title</h1>');
 assert.is(pretext.handle('###### Subsubsubsubsubtitle'), '<h6>Subsubsubsubsubtitle</h6>');
 assert.is(pretext.handle('####### Subsubsubsubsubtitle'), '<p>####### Subsubsubsubsubtitle');
-assert.is(pretext.handle('    while (true)\n        repeat();'), '<pre><code>while (true)\n    repeat();</code></pre>');
-assert.is(pretext.handle('    while (true)\n*       repeat();'), '<pre><code>while (true)\n<b>    repeat();</b></code></pre>');
-//assert.is(pretext.handle('    <!doctype html>\n    <html>&c.</html>'), '<pre><code>&lt;!doctype html&gt;\n&lt;html&gt;&amp;c.&lt;&sol;html&gt;</code></pre>');
+assert.is(pretext.handle('    while (true)\n        repeat();'), '<pre class=code>while (true)\n    repeat();</pre>');
+assert.is(pretext.handle('    <!doctype html>\n    <html>&c.</html>'), '<pre class=code>&lt;!doctype html&gt;\n&lt;html&gt;&amp;c.&lt;/html&gt;</pre>');
 
 assert.is(pretext.handle('* foo\n* bar'), '<ul>\n<li>foo\n<li>bar\n</ul>');
 assert.is(pretext.handle('* foo\n* bar\n  zot'), '<ul>\n<li>foo\n<li>bar\n  zot\n</ul>');
@@ -160,9 +159,9 @@ assert.is(pretext.linkify("_This fails_ (http://eval.com/(+ 1 (+ 2 (+ 3 4))))"),
 
 assert.is(pretext.linkify("V8's _structured\nstack trace_ (http://code.google.com/p/v8/wiki/JavaScriptStackTraceApi)"), "V8's <a href='http://code.google.com/p/v8/wiki/JavaScriptStackTraceApi'>structured\nstack trace</a>");
 
-assert.is(pretext("    int x;\n    \n    x = 1;"), "<pre><code>int x;\n\nx = 1;</code></pre>\n");
+assert.is(pretext("    int x;\n    \n    x = 1;"), "<pre class=code>int x;\n\nx = 1;</pre>\n");
 
-assert.is(pretext('    \\`'), '<pre><code>\\`</code></pre>\n');
+assert.is(pretext('    \\`'), '<pre class=code>\\`</pre>\n');
 
 // Typographical features
 
