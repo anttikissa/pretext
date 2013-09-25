@@ -7,7 +7,29 @@ design guidelines.  Expect the language to change.
 backward compatibility.  It doesn&#39;t try to cater to every possible need under
 the sky (except by being extensible).  It just tries to be simple, easy, and do
 its job well.
-<p>... Sprinkle examples here ...
+<h2>Features</h2>
+<p>Paragraphs are separated by empty lines, like in Markdown.  When starting a
+paragraph <code>&lt;</code>, it&#39;s taken to be a literal HTML element and is passed as-is.
+<pre><code>This is a paragraph.
+
+This is another.
+
+&lt;div class=&#39;red&#39;&gt;
+
+As an aside, 
+
+&lt;/div&gt;</code></pre>
+<p>This is a paragraph.
+<p>This is another.
+<div class='red'>
+<p>As an aside, 
+</div>
+<p>TODO
+<h2>Weight</h2>
+<p>Pretext is small (around 1.7 kB minified + compressed, 8kB without) and the code
+is comprehensibly and well-documented.  (TODO at least that&#39;s the goal.)
+<h2>Speed?</h2>
+<p>Pretext is fast enough (TODO test against marked)
 <h2>Implemented in JavaScript, Node.js and the browser</h2>
 <h2>Small footprint</h2>
 <h2>How fast is it?</h2>

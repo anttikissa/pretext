@@ -12,7 +12,41 @@ backward compatibility.  It doesn't try to cater to every possible need under
 the sky (except by being extensible).  It just tries to be simple, easy, and do
 its job well.
 
-... Sprinkle examples here ...
+## Features
+
+Paragraphs are separated by empty lines, like in Markdown.  When starting a
+paragraph `<`, it's taken to be a literal HTML element and is passed as-is.
+
+	This is a paragraph.
+
+	This is another.
+
+	<div class='red'>
+
+	As an aside, 
+
+	</div>
+
+This is a paragraph.
+
+This is another.
+
+<div class='red'>
+
+As an aside, 
+
+</div>
+
+TODO
+
+## Weight
+
+Pretext is small (around 1.7 kB minified + compressed, 8kB without) and the code
+is comprehensibly and well-documented.  (TODO at least that's the goal.)
+
+## Speed?
+
+Pretext is fast enough (TODO test against marked)
 
 ## Implemented in JavaScript, Node.js and the browser
 
