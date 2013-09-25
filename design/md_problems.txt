@@ -1,0 +1,25 @@
+
+http://ux.stackexchange.com/questions/15919/is-markdown-friendly-enough-for-non-technical-users
+
+I know I'm coming to this thread rather late, but I actually have run usability
+tests comparing a WYSIWYG editor (iWeb) to a non-WYSIWYG editor based mostly on
+markdown.
+
+Here's what I've found that users struggle with when using markdown:
+
+Tags that require character-level precision. For example, a user's inclination
+is to put a space between the square brackets and parentheses when making a
+link--but that doesn't work. Likewise, lists only work when there is a space
+after the asterisk or dash.
+They get paragraphs fine, but users are often inclined to use a single linebreak
+(when formatting an address, for example) and these are ignored if you don't add
+two spaces to the line before. Not intuitive, and those two spaces are
+invisible.
+More complicated tags, like for links and images, slow them down more than
+simple ones (like for strong and em)--but they can eventually get it if there's
+a helpful guide.
+Users are often not confident that X will work or unsure of exactly what it will
+do.
+Users don't always understand paths, directories, files, file extensions, URLs,
+etc. This makes making links and images difficult.
+
