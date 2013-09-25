@@ -21,9 +21,9 @@ As an aside,
 &lt;/div&gt;</code></pre>
 <p>This is a paragraph.
 <p>This is another.
-<div class='red'>
+<address>
 <p>As an aside, 
-</div>
+</address>
 <p>TODO
 <h2>Weight</h2>
 <p>Pretext is small (around 1.7 kB minified + compressed, 8kB without) and the code
