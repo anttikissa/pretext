@@ -228,9 +228,9 @@ phase?  Obviously others might refer to <code>all</code> and expect it to work.
 <p>Example: beautify / uglify HTML
 <h2>To study</h2>
 <ul>
+<li>Markright http://blog.elliottcable.name/posts/markright.xhtml
 <li>Textile http://en.wikipedia.org/wiki/Textile_(markup_language)
 <li>txt2tags http://txt2tags.org/online.php
-<li>Markright http://blog.elliottcable.name/posts/markright.xhtml
 <li>Github flavored markdown http://github.github.com/github-flavored-markdown/
 <li>The future of Markdown http://www.codinghorror.com/blog/2012/10/the-future-of-markdown.html
 <li>MultiMarkdown http://fletcherpenney.net/multimarkdown/
