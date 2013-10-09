@@ -15,29 +15,7 @@ its job well.
 ## Features
 
 Paragraphs are separated by empty lines, like in Markdown.  When starting a
-paragraph `<`, it's taken to be a literal HTML element and is passed as-is.
-
-	This is a paragraph.
-
-	This is another.
-
-	<div class='red'>
-
-	As an aside, 
-
-	</div>
-
-This is a paragraph.
-
-This is another.
-
-<address>
-
-As an aside, 
-
-</address>
-
-TODO
+paragraph with a `<`, it's taken to be a literal HTML element and is passed as-is.
 
 ## Weight
 
@@ -46,7 +24,7 @@ is comprehensibly and well-documented.  (TODO at least that's the goal.)
 
 ## Speed?
 
-Pretext is fast enough (TODO test against marked)
+Pretext is "fast enough" (TODO test against marked)
 
 ## Implemented in JavaScript, Node.js and the browser
 
