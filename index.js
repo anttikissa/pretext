@@ -177,7 +177,7 @@ function type(element) {
 		return 'codeBlock';
 	} else if (/^\*   /.test(element)) {
 		return 'codeBlock';
-	} else if (/^\* /.test(element)) {
+	} else if (/^- /.test(element)) {
 		return 'ul';
 	} else if (/^[0-9]+\. /.test(element)) {
 		return 'ol';
@@ -195,12 +195,12 @@ function handle(element) {
 }
 
 function li(item) {
-	var content = item.replace(/^(\* |[0-9]+. )/, '');
+	var content = item.replace(/^(- |[0-9]+. )/, '');
 	return "<li>" + text(content);
 }
 
 function ul(element) {
-	var separator = /\n\* /;
+	var separator = /\n- /;
 	var result = "<ul>\n";
 	element.split(separator).forEach(function(item) {
 		result += li(item) + '\n';
