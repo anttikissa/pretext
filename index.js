@@ -1,6 +1,10 @@
+/* global module:true */
 (function() {
 
     'use strict';
+
+    // Will eventually be the entry point
+    var pretext;
 
     function untabify(text) {
         var result = '';
@@ -196,38 +200,39 @@
 
     function li(item) {
         var content = item.replace(/^(- |[0-9]+. )/, '');
-        return "<li>" + normalText(content);
+        return '<li>' + normalText(content);
     }
 
     function ul(element) {
         var separator = /\n- /;
-        var result = "<ul>\n";
+        var result = '<ul>\n';
         element.split(separator).forEach(function(item) {
             result += li(item) + '\n';
         });
-        result += "</ul>";
+        result += '</ul>';
         return result;
     }
 
     function ol(element) {
         var separator = /\n(?:[0-9]+)\. /;
         var first = element.match(/^([0-9]+)\. /)[1];
-        if (first == 1) {
-            var result = "<ol>\n";
+        var result;
+        if (first === '1') {
+            result = '<ol>\n';
         } else {
-            var result = "<ol start=" + first + ">\n";
+            result = '<ol start=' + first + '>\n';
         }
 
         element.split(separator).forEach(function(item) {
             result += li(item) + '\n';
         });
-        result += "</ol>";
+        result += '</ol>';
         return result;
     }
 
     var handlers = {
         paragraph: function(element) {
-            return "<p>" + normalText(element);
+            return '<p>' + normalText(element);
         },
 
         heading: function(element) {
@@ -235,7 +240,7 @@
             var match = element.match(form);
             var level = match[1].length;
             var content = normalText(match[2]);
-            return "<h" + level + ">" + content + "</h" + level + ">";
+            return '<h' + level + '>' + content + '</h' + level + '>';
         },
 
         codeBlock: function(element) {
@@ -247,8 +252,8 @@
                 if (!match) {
                     return escape(line);
                 }
-                if (match[1] == '*') {
-                    return "<b>" + escape(match[2]) + "</b>";
+                if (match[1] === '*') {
+                    return '<b>' + escape(match[2]) + '</b>';
                 } else {
                     return escape(match[2]);
                 }
@@ -256,7 +261,7 @@
 
             var content = lines.map(deindent).join('\n');
 
-            return "<pre class=code>" + content + "</pre>";
+            return '<pre class=code>' + content + '</pre>';
         },
 
         ul: function(element) {
@@ -273,7 +278,7 @@
 
         blockquote: function(element) {
             var stripped = element.replace(/^>( |$)/gm, '');
-            return "<blockquote>" + pretext(stripped) + "</blockquote>";
+            return '<blockquote>' + pretext(stripped) + '</blockquote>';
         }
     };
 
@@ -291,7 +296,7 @@
             var part = parts[i];
             if (result.length) {
                 var prevIdx = result.length - 1;
-                if (type(part) == 'codeBlock' && type(result[prevIdx]) == 'codeBlock') {
+                if (type(part) === 'codeBlock' && type(result[prevIdx]) === 'codeBlock') {
                     result[prevIdx] += '\n    \n' + part;
                     continue;
                 }
@@ -314,7 +319,7 @@
         joinParts
     ];
 
-    function pretext(text) {
+    pretext = function(text) {
         var result = text;
 
         topLevelFilters.forEach(function(filter) {
@@ -322,7 +327,7 @@
         });
 
         return result;
-    }
+    };
 
     pretext.trim = trim;
     pretext.untabify = untabify;
