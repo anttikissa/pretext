@@ -5,8 +5,6 @@ var pretext = require('./');
 
 // Whitespace manipulation
 
-//assert.fatal = false;
-
 assert.is(pretext.trim('a\n  \nb'), 'a\n\nb');
 assert.is(pretext.trim('foo\n  \n  bar  \n\t\nzot'), 'foo\n\n  bar  \n\nzot');
 assert.is(pretext.trim('\n\nfoo\n\n  \n'), 'foo');
@@ -199,3 +197,4 @@ exampleFiles.forEach(function(exampleFile) {
 	}
 });
 
+console.log('all tests ok!');
