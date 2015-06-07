@@ -1,13 +1,13 @@
 {
   "name": "pretext",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Pretext, a simple Markdown-inspired markup language",
   "main": "index.js",
   "scripts": {
     "test": "./test"
   },
   "bin": {
-  	"pretext": "bin/pretext"
+    "pretext": "bin/pretext"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   "author": "Antti Sykäri",
   "license": "BSD",
   "devDependencies": {
-    "basic-assert": "0.1.0"
+    "basic-assert": "0.1.0",
+    "eslint": "^0.22.1"
   }
 }

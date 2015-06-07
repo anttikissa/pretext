@@ -1,0 +1,4 @@
+#!/bin/bash
+
+eslint index.js
+
