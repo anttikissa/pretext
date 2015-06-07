@@ -54,6 +54,61 @@
         return escape(text).replace(escapedCharacterReference, '&$1;');
     }
 
+    // Replace /contents/ with <i>contents</i>.
+    //
+    // 'contents' must be non-empty.
+    //
+    // The starting slash must not be preceded with a word character (\w), and
+    // must not be followed by a white space character (\s).
+    // The ending slash must not be preceded with a white space character (\s), and
+    // must not be followed by a word character (\w).
+    //
+    // Try to not match URLs.  (Though it is possible to contruct a valid URL that
+    // will be matched, such as http://foo.com/bar+/zot/.  Eventually we need a way
+    // around those.)
+    //
+    // Slashes that are part of URLs are not matched.
+    function italicize(text) {
+        var pattern = /([^<:\/]|^)\B\/(?!\s)([^]*?[^:\/\s])\/\B/g;
+        return text.replace(pattern, '$1<i>$2</i>');
+    }
+
+    // Replace *contents* with <b>contents</b>.
+    //
+    // 'contents' must be non-empty.
+    //
+    // The starting asterisk must not be preceded with a word character (\w), and
+    // must not be followed by a white space character (\s).
+    // The ending asterisk must not be preceded with a white space character (\s), and
+    // must not be followed by a word character (\w).
+    function boldify(text) {
+        var pattern = /\B\*(?!\s)([^]*?[^\s])\*\B/g;
+        return text.replace(pattern, '<b>$1</b>');
+    }
+
+    // Replace _link text_ (url) with <a href='url'>link text</a>.
+    //
+    // Nested parentheses inside the URLs are supported to two levels of nesting:
+    //
+    // _link_ (http://domain.com/this(is(url))) ->
+    // <a href='http://domain.com/this(is(url))'>link</a>
+    function linkify(text) {
+        var pattern = /\b_(?!\s)([^]*?[^\s])_(?:\s*\(((?:[^\(\)]*\((?:[^\(\)]*\([^\(\)]*\))*[^\(\)]*\))*[^\(\)]*)\)|\b)/g;
+
+        return text.replace(pattern, function(match, p1, p2) {
+            var href = p2 ? " href='" + escapeSome(p2) + "'" : '';
+            return '<a' + href + '>' + p1 + '</a>';
+        });
+    }
+
+    // Replace -- with &ndash; and --- with &mdash;.
+    function dashify(text) {
+        var pattern = /(^|[^!-])(---?)([^->]|$)/g;
+        return text.replace(pattern, function(match, p1, p2, p3) {
+            return p1 + '&' + (p2.length === 2 ? 'n' : 'm') + 'dash;' + p3;
+        });
+    }
+
     var plainTextFilters = [
         escapeSome,
         italicize,
@@ -100,61 +155,6 @@
 
         return text.replace(pattern, function(match, p1, p2) {
             return p1 + '<code>' + escapeCode(p2) + '</code>';
-        });
-    }
-
-    // Replace /contents/ with <i>contents</i>.
-    //
-    // 'contents' must be non-empty.
-    //
-    // The starting slash must not be preceded with a word character (\w), and
-    // must not be followed by a white space character (\s).
-    // The ending slash must not be preceded with a white space character (\s), and
-    // must not be followed by a word character (\w).
-    //
-    // Try to not match URLs.  (Though it is possible to contruct a valid URL that
-    // will be matched, such as http://foo.com/bar+/zot/.  Eventually we need a way
-    // around those.)
-    //
-    // Slashes that are part of URLs are not matched.
-    function italicize(text) {
-        var pattern = /([^<:\/]|^)\B\/(?!\s)([^]*?[^:\/\s])\/\B/g;
-        return text.replace(pattern, '$1<i>$2</i>');
-    }
-
-    // Replace *contents* with <b>contents</b>.
-    //
-    // 'contents' must be non-empty.
-    //
-    // The starting asterisk must not be preceded with a word character (\w), and
-    // must not be followed by a white space character (\s).
-    // The ending asterisk must not be preceded with a white space character (\s), and
-    // must not be followed by a word character (\w).
-    function boldify(text) {
-        var pattern = /\B\*(?!\s)([^]*?[^\s])\*\B/g;
-        return text.replace(pattern, '<b>$1</b>');
-    }
-
-    // Replace _link text_ (url) with <a href='url'>link text</a>.
-    //
-    // Nested parentheses inside the URLs are supported to two levels of nesting:
-    //
-    // _link_ (http://domain.com/this(is(url))) ->
-    // <a href='http://domain.com/this(is(url))'>link</a>
-    function linkify(text) {
-        var pattern = /\b_(?!\s)([^]*?[^\s])_(?:\s*\(((?:[^\(\)]*\((?:[^\(\)]*\([^\(\)]*\))*[^\(\)]*\))*[^\(\)]*)\)|\b)/g;
-
-        return text.replace(pattern, function(match, p1, p2, p3) {
-            var href = p2 ? " href='" + escapeSome(p2) + "'" : "";
-            return '<a' + href + '>' + p1 + '</a>';
-        });
-    }
-
-    // Replace -- with &ndash; and --- with &mdash;.
-    function dashify(text) {
-        var pattern = /(^|[^!-])(---?)([^->]|$)/g;
-        return text.replace(pattern, function(match, p1, p2, p3) {
-            return p1 + '&' + (p2.length === 2 ? 'n' : 'm') + 'dash;' + p3;
         });
     }
 
