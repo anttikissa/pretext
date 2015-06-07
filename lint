@@ -1,4 +1,4 @@
 #!/bin/bash
 
-eslint index.js
+eslint bin/pretext index.js
 

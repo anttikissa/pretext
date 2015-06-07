@@ -1,31 +1,49 @@
 #!/usr/bin/env node
+// vim:ft=javascript
+/* global require:true process:true console:true Buffer:true */
 
-var fs = require('fs');
-var pretext = require('../');
+(function() {
+	'use strict';
 
-var stdin = process.stdin;
+	var fs = require('fs');
+	var pretext = require('../');
 
-var args = process.argv.splice(2);
-if (args.length != 1) {
-	console.log("Usage: pretext <filename>\n");
-	console.log("If <filename> is '-', read from standard input.");
-	return;
-} 
+	/* eslint-disable no-console */
+	function print() {
+		console.log.apply(console, arguments);
+	}
+	/* eslint-enable no-console */
 
-var filename = args[0];
-if (filename === '-') {
-	var chunks = [];  
-	stdin.resume();
-	stdin.on('data', function(chunk) {
-		chunks.push(chunk);
-	});
-	stdin.on('end', function() {
-		var contents = Buffer.concat(chunks).toString('utf8');
+	var stdin = process.stdin;
+
+	var args = process.argv.splice(2);
+	if (args.length !== 1) {
+		print('Usage: pretext <filename>\n');
+		print('If <filename> is "-", read from standard input.');
+		return;
+	}
+
+	function readFromStdin() {
+		var chunks = [];
+		stdin.resume();
+		stdin.on('data', function(chunk) {
+			chunks.push(chunk);
+		});
+		stdin.on('end', function() {
+			var contents = Buffer.concat(chunks).toString('utf8');
+			process.stdout.write(pretext(contents));
+		});
+	}
+
+	function readFromFile(filename) {
+		var contents = fs.readFileSync(filename, 'utf8');
 		process.stdout.write(pretext(contents));
-	});
-} else {
-	var contents = fs.readFileSync(args[0], 'utf8');
-	process.stdout.write(pretext(contents));
-}
+	}
 
+	if (args[0] === '-') {
+		readFromStdin();
+	} else {
+		readFromFile(args[0]);
+	}
 
+})();
