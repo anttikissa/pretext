@@ -6,7 +6,7 @@
         var result = '';
         var column = 0;
         for (var i = 0, len = text.length; i < len; i++) {
-            var c = text[ i ];
+            var c = text[i];
             if (c === '\t') {
                 result += ' ';
                 while (++column % 4 !== 0) {
@@ -194,10 +194,6 @@
         }
     }
 
-    function handle(element) {
-        return handlers[ type(element) ](element);
-    }
-
     function li(item) {
         var content = item.replace(/^(- |[0-9]+. )/, '');
         return "<li>" + normalText(content);
@@ -215,7 +211,7 @@
 
     function ol(element) {
         var separator = /\n(?:[0-9]+)\. /;
-        var first = element.match(/^([0-9]+)\. /)[ 1 ];
+        var first = element.match(/^([0-9]+)\. /)[1];
         if (first == 1) {
             var result = "<ol>\n";
         } else {
@@ -237,8 +233,8 @@
         heading: function(element) {
             var form = /^(#{1,6}) ([^]*)$/;
             var match = element.match(form);
-            var level = match[ 1 ].length;
-            var content = normalText(match[ 2 ]);
+            var level = match[1].length;
+            var content = normalText(match[2]);
             return "<h" + level + ">" + content + "</h" + level + ">";
         },
 
@@ -251,10 +247,10 @@
                 if (!match) {
                     return escape(line);
                 }
-                if (match[ 1 ] == '*') {
-                    return "<b>" + escape(match[ 2 ]) + "</b>";
+                if (match[1] == '*') {
+                    return "<b>" + escape(match[2]) + "</b>";
                 } else {
-                    return escape(match[ 2 ]);
+                    return escape(match[2]);
                 }
             }
 
@@ -281,24 +277,28 @@
         }
     };
 
+    function handle(element) {
+        return handlers[type(element)](element);
+    }
+
+    function handleAll(parts) {
+        return parts.map(handle);
+    }
+
     function joinCodeBlocks(parts) {
         var result = [];
         for (var i = 0, len = parts.length; i < len; i++) {
-            var part = parts[ i ];
+            var part = parts[i];
             if (result.length) {
                 var prevIdx = result.length - 1;
-                if (type(part) == 'codeBlock' && type(result[ prevIdx ]) == 'codeBlock') {
-                    result[ prevIdx ] += '\n    \n' + part;
+                if (type(part) == 'codeBlock' && type(result[prevIdx]) == 'codeBlock') {
+                    result[prevIdx] += '\n    \n' + part;
                     continue;
                 }
             }
             result.push(part);
         }
         return result;
-    }
-
-    function handleAll(parts) {
-        return parts.map(handle);
     }
 
     function joinParts(parts) {
