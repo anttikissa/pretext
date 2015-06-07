@@ -1,16 +1,20 @@
+// eslint node: true
+(function() {
+
+'use strict';
 
 function untabify(text) {
-	result = '';
-	column = 0;
+	var result = '';
+	var column = 0;
 	for (var i = 0, len = text.length; i < len; i++) {
 		var c = text[i];
-		if (c == '\t') {
+		if (c === '\t') {
 			result += ' ';
-			while (++column % 4 != 0) {
+			while (++column % 4 !== 0) {
 				result += ' ';
 			}
 			continue;
-		} else if (c == '\n') {
+		} else if (c === '\n') {
 			column = 0;
 		} else {
 			column++;
@@ -51,36 +55,6 @@ function escapeSome(text) {
 	return escape(text).replace(escapedCharacterReference, '&$1;');
 }
 
-// The filter that handles most of the "normal" text.  (For example, all of the
-// the text -- apart from the markup -- in headings, list items, and
-// paragraphs.)
-// 
-// The text might contain inline code and HTML tags, which are handled by
-// 'codify' and 'textWithHtml' filters.
-function text(text) {
-	var codified = codify(text);
-
-	var restPattern = /(^|<\/code>)([^]*?)(<code>|$)/g;
-	return codified.replace(restPattern, function(match, p1, p2, p3) {
-		return p1 + textWithHtml(p2) + p3;
-	});
-}
-
-// Process text that may contain HTML tags (but not inline code).  Leave the
-// HTML tags alone and run the text sequences in between them through
-// 'plainText' filter.
-function textWithHtml(text) {
-	// Find text between things that look like HTML tags.
-	var betweenPattern = /(^|[^=<>]\s*>)([^]*?)(<\/?\b|$)/g;
-	// This is the right one
-	// TODO what's this?
-	//var betweenPattern = /(^|[^=<>]\s*\/?>)([^]*?)(<\/?\b|$)/g;
-
-	return text.replace(betweenPattern, function(match, p1, p2, p3) {
-		return p1 + plainText(p2) + p3;
-	});
-}
-
 var plainTextFilters = [
 	escapeSome,
 	italicize,
@@ -99,6 +73,21 @@ function plainText(text) {
 	});
 
 	return result;
+}
+
+// Process text that may contain HTML tags (but not inline code).  Leave the
+// HTML tags alone and run the text sequences in between them through
+// 'plainText' filter.
+function textWithHtml(text) {
+	// Find text between things that look like HTML tags.
+	var betweenPattern = /(^|[^=<>]\s*>)([^]*?)(<\/?\b|$)/g;
+	// This is the right one
+	// TODO what's this?
+	//var betweenPattern = /(^|[^=<>]\s*\/?>)([^]*?)(<\/?\b|$)/g;
+
+	return text.replace(betweenPattern, function(match, p1, p2, p3) {
+		return p1 + plainText(p2) + p3;
+	});
 }
 
 // Replace code blocks (`...`) in text by <code>...</code>.  The contents
@@ -120,9 +109,9 @@ function codify(text) {
 // 'contents' must be non-empty.
 //
 // The starting slash must not be preceded with a word character (\w), and
-// must not be followed by a white space character (\s).  
+// must not be followed by a white space character (\s).
 // The ending slash must not be preceded with a white space character (\s), and
-// must not be followed by a word character (\w).  
+// must not be followed by a word character (\w).
 //
 // Try to not match URLs.  (Though it is possible to contruct a valid URL that
 // will be matched, such as http://foo.com/bar+/zot/.  Eventually we need a way
@@ -139,9 +128,9 @@ function italicize(text) {
 // 'contents' must be non-empty.
 //
 // The starting asterisk must not be preceded with a word character (\w), and
-// must not be followed by a white space character (\s).  
+// must not be followed by a white space character (\s).
 // The ending asterisk must not be preceded with a white space character (\s), and
-// must not be followed by a word character (\w).  
+// must not be followed by a word character (\w).
 function boldify(text) {
 	var pattern = /\B\*(?!\s)([^]*?[^\s])\*\B/g;
 	return text.replace(pattern, '<b>$1</b>');
@@ -170,6 +159,23 @@ function dashify(text) {
 	});
 }
 
+// The filter that handles most of the "normal" text.  (For example, all of the
+// the text -- apart from the markup -- in headings, list items, and
+// paragraphs.)
+//
+// The text might contain inline code and HTML tags, which are handled by
+// 'codify' and 'textWithHtml' filters.
+// TODO maybe rename to inlineText or something?
+function normalText(text) {
+	var codified = codify(text);
+
+	var restPattern = /(^|<\/code>)([^]*?)(<code>|$)/g;
+	return codified.replace(restPattern, function(match, p1, p2, p3) {
+		return p1 + textWithHtml(p2) + p3;
+	});
+}
+
+
 function type(element) {
 	if (/^#{1,6} /.test(element)) {
 		return 'heading';
@@ -196,7 +202,7 @@ function handle(element) {
 
 function li(item) {
 	var content = item.replace(/^(- |[0-9]+. )/, '');
-	return "<li>" + text(content);
+	return "<li>" + normalText(content);
 }
 
 function ul(element) {
@@ -227,13 +233,13 @@ function ol(element) {
 
 var handlers = {
 	paragraph: function(element) {
-		return "<p>" + text(element);
+		return "<p>" + normalText(element);
 	},
 	heading: function(element) {
 		var form = /^(#{1,6}) ([^]*)$/;
 		var match = element.match(form);
 		var level = match[1].length;
-		var content = text(match[2]);
+		var content = normalText(match[2]);
 		return "<h" + level + ">" + content + "</h" + level + ">";
 	},
 	codeBlock: function(element) {
@@ -265,7 +271,7 @@ var handlers = {
 	},
 	blockquote: function(element) {
 		var stripped = element.replace(/^>( |$)/gm, '');
-		return "<blockquote>" + mk(stripped) + "</blockquote>";
+		return "<blockquote>" + pretext(stripped) + "</blockquote>";
 	}
 };
 
@@ -274,11 +280,11 @@ function joinCodeBlocks(parts) {
 	for (var i = 0, len = parts.length; i < len; i++) {
 		var part = parts[i];
 		if (result.length) {
-			prevIdx = result.length - 1;
+			var prevIdx = result.length - 1;
 			if (type(part) == 'codeBlock' && type(result[prevIdx]) == 'codeBlock') {
 				result[prevIdx] += '\n    \n' + part;
 				continue;
-			} 
+			}
 		}
 		result.push(part);
 	}
@@ -302,10 +308,8 @@ var topLevelFilters = [
 	joinParts
 ]
 
-// TODO - replace 'phase' with 'filter' or similar more suitable
-//
-function mk(text) {
-	result = text;
+function pretext(text) {
+	var result = text;
 
 	topLevelFilters.forEach(function(filter) {
 		result = filter(result);
@@ -314,20 +318,21 @@ function mk(text) {
 	return result;
 }
 
-mk.trim = trim;
-mk.untabify = untabify;
-mk.split = split;
-mk.type = type;
-mk.handle = handle;
-mk.escape = escape;
-mk.escapeCode = escapeCode;
-mk.textWithHtml = textWithHtml;
-mk.text = text;
-mk.codify = codify;
-mk.italicize = italicize;
-mk.boldify = boldify;
-mk.linkify = linkify;
-mk.dashify = dashify;
+pretext.trim = trim;
+pretext.untabify = untabify;
+pretext.split = split;
+pretext.type = type;
+pretext.handle = handle;
+pretext.escape = escape;
+pretext.escapeCode = escapeCode;
+pretext.textWithHtml = textWithHtml;
+pretext.codify = codify;
+pretext.italicize = italicize;
+pretext.boldify = boldify;
+pretext.linkify = linkify;
+pretext.dashify = dashify;
+pretext.normalText = normalText;
 
-module.exports = mk;
+module.exports = pretext;
 
+})();
